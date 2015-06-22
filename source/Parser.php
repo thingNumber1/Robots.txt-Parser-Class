@@ -138,19 +138,19 @@ class Parser {
     protected function shouldSwitchToZeroPoint()
     {
         return in_array($this->content->getCurrentWord(), array(
-            new Directive\Allow()->getName(),
-            self::DIRECTIVE_DISALLOW,
-            self::DIRECTIVE_HOST,
-            self::DIRECTIVE_USERAGENT,
-            self::DIRECTIVE_SITEMAP,
-            self::DIRECTIVE_CRAWL_DELAY,
-            self::DIRECTIVE_CLEAN_PARAM,
+            $this->repo->get('\t1gor\RobotsTxt\Directive\Allow')->getName(),
+            $this->repo->get('\t1gor\RobotsTxt\Directive\Disallow')->getName(),
+            $this->repo->get('\t1gor\RobotsTxt\Directive\Host')->getName(),
+            $this->repo->get('\t1gor\RobotsTxt\Directive\UserAgent')->getName(),
+            $this->repo->get('\t1gor\RobotsTxt\Directive\SiteMap')->getName(),
+            $this->repo->get('\t1gor\RobotsTxt\Directive\CrawlDelay')->getName(),
+            $this->repo->get('\t1gor\RobotsTxt\Directive\CleanParam')->getName()
         ), true);
     }
 
     /**
      * Process state ZERO_POINT
-     * @return RobotsTxtParser
+     * @return $this
      */
     protected function zeroPoint()
     {
