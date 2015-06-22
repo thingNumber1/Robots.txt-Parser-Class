@@ -1,560 +1,562 @@
 <?php
 
-	/**
-	 * Class for parsing robots.txt files
-	 *
-	 * @author Igor Timoshenkov (igor.timoshenkov@gmail.com)
-	 *
-	 * Logic schema and signals:
-	 * @link https://docs.google.com/document/d/1_rNjxpnUUeJG13ap6cnXM6Sx9ZQtd1ngADXnW9SHJSE/edit
-	 *
-	 * Some useful links and materials:
-	 * @link https://developers.google.com/webmasters/control-crawl-index/docs/robots_txt
-	 * @link http://help.yandex.com/webmaster/?id=1113851
-	 * @link http://socoder.net/index.php?snippet=23824
-	 * @link http://www.the-art-of-web.com/php/parse-robots/#.UP0C1ZGhM6I
-	 */
-	class RobotsTxtParser {
+namespace t1gor\RobotsTxt;
 
-		// default encoding
-		const DEFAULT_ENCODING = 'UTF-8';
+/**
+ * Class for parsing robots.txt files
+ *
+ * @author Igor Timoshenkov (igor.timoshenkov@gmail.com)
+ *
+ * Logic schema and signals:
+ * @link https://docs.google.com/document/d/1_rNjxpnUUeJG13ap6cnXM6Sx9ZQtd1ngADXnW9SHJSE/edit
+ *
+ * Some useful links and materials:
+ * @link https://developers.google.com/webmasters/control-crawl-index/docs/robots_txt
+ * @link http://help.yandex.com/webmaster/?id=1113851
+ * @link http://socoder.net/index.php?snippet=23824
+ * @link http://www.the-art-of-web.com/php/parse-robots/#.UP0C1ZGhM6I
+ */
+class DeprecatedParser {
 
-		// states
-		const STATE_ZERO_POINT     = 'zero-point';
-		const STATE_READ_DIRECTIVE = 'read-directive';
-		const STATE_SKIP_SPACE     = 'skip-space';
-		const STATE_SKIP_LINE      = 'skip-line';
-		const STATE_READ_VALUE     = 'read-value';
+    // default encoding
+    const DEFAULT_ENCODING = 'UTF-8';
 
-		// directives
-		const DIRECTIVE_ALLOW       = 'allow';
-		const DIRECTIVE_DISALLOW    = 'disallow';
-		const DIRECTIVE_HOST        = 'host';
-		const DIRECTIVE_SITEMAP     = 'sitemap';
-		const DIRECTIVE_USERAGENT   = 'user-agent';
-		const DIRECTIVE_CRAWL_DELAY = 'crawl-delay';
-		const DIRECTIVE_CLEAN_PARAM = 'clean-param';
+    // states
+    const STATE_ZERO_POINT     = 'zero-point';
+    const STATE_READ_DIRECTIVE = 'read-directive';
+    const STATE_SKIP_SPACE     = 'skip-space';
+    const STATE_SKIP_LINE      = 'skip-line';
+    const STATE_READ_VALUE     = 'read-value';
 
-		// language
-		const LANG_NO_CONTENT_PASSED = "No content submitted - please check the file that you are using.";
+    // directives
+    const DIRECTIVE_ALLOW       = 'allow';
+    const DIRECTIVE_DISALLOW    = 'disallow';
+    const DIRECTIVE_HOST        = 'host';
+    const DIRECTIVE_SITEMAP     = 'sitemap';
+    const DIRECTIVE_USERAGENT   = 'user-agent';
+    const DIRECTIVE_CRAWL_DELAY = 'crawl-delay';
+    const DIRECTIVE_CLEAN_PARAM = 'clean-param';
 
-		// current state
-		private $state = "";
+    // language
+    const LANG_NO_CONTENT_PASSED = "No content submitted - please check the file that you are using.";
 
-		// robots.txt file content
-		private $content = "";
+    // current state
+    private $state = "";
 
-		// rules set
-		private $rules = array();
+    // robots.txt file content
+    private $content = "";
 
-		// internally used variables
-		protected $current_word = "";
-		protected $current_char = "";
-		protected $char_index = 0;
-		protected $current_directive = "";
-		protected $previous_directive = "";
-		protected $userAgent = "*";
+    // rules set
+    private $rules = array();
 
-		/**
-		 * @param  string $content  - file content
-		 * @param  string $encoding - encoding
-		 * @throws InvalidArgumentException
-		 * @return RobotsTxtParser
-		 */
-		public function __construct($content, $encoding = self::DEFAULT_ENCODING)
-		{
-			// convert encoding
-			$encoding = !empty($encoding) ? $encoding : mb_detect_encoding($content);
-			mb_internal_encoding($encoding);
+    // internally used variables
+    protected $current_word = "";
+    protected $current_char = "";
+    protected $char_index = 0;
+    protected $current_directive = "";
+    protected $previous_directive = "";
+    protected $userAgent = "*";
 
-			// set content
-			$this->content = iconv($encoding, 'UTF-8//IGNORE', $content);
+    /**
+     * @param  string $content  - file content
+     * @param  string $encoding - encoding
+     * @throws \InvalidArgumentException
+     * @return RobotsTxtParser
+     */
+    public function __construct($content, $encoding = self::DEFAULT_ENCODING)
+    {
+        // convert encoding
+        $encoding = !empty($encoding) ? $encoding : mb_detect_encoding($content);
+        mb_internal_encoding($encoding);
 
-			// Ensure that there's a newline at the end of the file, otherwise the
-			// last line is ignored
-			$this->content .= PHP_EOL;
+        // set content
+        $this->content = iconv($encoding, 'UTF-8//IGNORE', $content);
 
-			// set default state
-			$this->state = self::STATE_ZERO_POINT;
+        // Ensure that there's a newline at the end of the file, otherwise the
+        // last line is ignored
+        $this->content .= PHP_EOL;
 
-			// parse rules - default state
-			$this->prepareRules();
-		}
+        // set default state
+        $this->state = self::STATE_ZERO_POINT;
 
-		// signals
+        // parse rules - default state
+        $this->prepareRules();
+    }
 
-		/**
-		 * Comment signal (#)
-		 */
-		protected function sharp() {
-			return ($this->current_char == '#');
-		}
+    // signals
 
-		/**
-		 * Allow directive signal
-		 */
-		protected function allow() {
-			return ($this->current_word == self::DIRECTIVE_ALLOW);
-		}
+    /**
+     * Comment signal (#)
+     */
+    protected function sharp() {
+        return ($this->current_char == '#');
+    }
 
-		/**
-		 * Disallow directive signal
-		 */
-		protected function disallow() {
-			return ($this->current_word == self::DIRECTIVE_DISALLOW);
-		}
+    /**
+     * Allow directive signal
+     */
+    protected function allow() {
+        return ($this->current_word == self::DIRECTIVE_ALLOW);
+    }
 
-		/**
-		 * Host directive signal
-		 */
-		protected function host() {
-			return ($this->current_word == self::DIRECTIVE_HOST);
-		}
+    /**
+     * Disallow directive signal
+     */
+    protected function disallow() {
+        return ($this->current_word == self::DIRECTIVE_DISALLOW);
+    }
 
-		/**
-		 * Sitemap directive signal
-		 */
-		protected function sitemap() {
-			return ($this->current_word == self::DIRECTIVE_SITEMAP);
-		}
+    /**
+     * Host directive signal
+     */
+    protected function host() {
+        return ($this->current_word == self::DIRECTIVE_HOST);
+    }
 
-		/**
-		 * Key : value pair separator signal
-		 */
-		protected function lineSeparator() {
-			return ($this->current_char == ':');
-		}
+    /**
+     * Sitemap directive signal
+     */
+    protected function sitemap() {
+        return ($this->current_word == self::DIRECTIVE_SITEMAP);
+    }
 
-		/**
-		 * Move to new line signal
-		 */
-		protected function newLine()
-		{
-            return in_array(PHP_EOL, array(
-                $this->current_char,
-                $this->current_word
-            ));
-		}
+    /**
+     * Key : value pair separator signal
+     */
+    protected function lineSeparator() {
+        return ($this->current_char == ':');
+    }
 
-		/**
-		 * "Space" signal
-		 */
-		protected function space() {
-			return ($this->current_char == "\s");
-		}
+    /**
+     * Move to new line signal
+     */
+    protected function newLine()
+    {
+        return in_array(PHP_EOL, array(
+            $this->current_char,
+            $this->current_word
+        ));
+    }
 
-		/**
-		 * User-agent directive signal
-		 */
-		protected function userAgent() {
-			return ($this->current_word == self::DIRECTIVE_USERAGENT);
-		}
+    /**
+     * "Space" signal
+     */
+    protected function space() {
+        return ($this->current_char == "\s");
+    }
 
-		/**
-		 * Crawl-Delay directive signal
-		 */
-		protected function crawlDelay() {
-			return ($this->current_word == self::DIRECTIVE_CRAWL_DELAY);
-		}
+    /**
+     * User-agent directive signal
+     */
+    protected function userAgent() {
+        return ($this->current_word == self::DIRECTIVE_USERAGENT);
+    }
 
-		/**
-		 * Change state
-		 *
-		 * @param string $stateTo - state that should be set
-		 * @return void
-		 */
-		protected function switchState($stateTo = self::STATE_SKIP_LINE) {
-			$this->state = $stateTo;
-		}
+    /**
+     * Crawl-Delay directive signal
+     */
+    protected function crawlDelay() {
+        return ($this->current_word == self::DIRECTIVE_CRAWL_DELAY);
+    }
 
-		/**
-		 * Parse rules
-		 *
-		 * @return void
-		 */
-		public function prepareRules()
-		{
-			$contentLength = mb_strlen($this->content);
-			while ($this->char_index <= $contentLength) {
-				$this->step();
-			}
+    /**
+     * Change state
+     *
+     * @param string $stateTo - state that should be set
+     * @return void
+     */
+    protected function switchState($stateTo = self::STATE_SKIP_LINE) {
+        $this->state = $stateTo;
+    }
 
-			foreach ($this->rules as $userAgent => $directive) {
-				foreach ($directive as $directiveName => $directiveValue) {
-					if (is_array($directiveValue)) {
-						$this->rules[$userAgent][$directiveName] = array_values(array_unique($directiveValue));
-					}
-				}
-			}
-		}
+    /**
+     * Parse rules
+     *
+     * @return void
+     */
+    public function prepareRules()
+    {
+        $contentLength = mb_strlen($this->content);
+        while ($this->char_index <= $contentLength) {
+            $this->step();
+        }
 
-		/**
-		 * Check if we should switch
-		 * @return bool
-		 */
-		protected function shouldSwitchToZeroPoint()
-		{
-			return in_array($this->current_word, array(
-				self::DIRECTIVE_ALLOW,
-				self::DIRECTIVE_DISALLOW,
-				self::DIRECTIVE_HOST,
-				self::DIRECTIVE_USERAGENT,
-				self::DIRECTIVE_SITEMAP,
-				self::DIRECTIVE_CRAWL_DELAY,
-				self::DIRECTIVE_CLEAN_PARAM,
-			), true);
-		}
-
-		/**
-		 * Process state ZERO_POINT
-		 * @return RobotsTxtParser
-		 */
-		protected function zeroPoint()
-		{
-			if ($this->shouldSwitchToZeroPoint()) {
-				$this->switchState(self::STATE_READ_DIRECTIVE);
-			}
-			// unknown directive - skip it
-			elseif ($this->newLine()) {
-				$this->current_word = "";
-				$this->increment();
-			}
-			else {
-				$this->increment();
-			}
-			return $this;
-		}
-
-		/**
-		 * Read directive
-         *
-		 * @return RobotsTxtParser
-		 */
-		protected function readDirective()
-		{
-			$this->previous_directive = $this->current_directive;
-			$this->current_directive = mb_strtolower(trim($this->current_word));
-
-			$this->increment();
-
-			if ($this->lineSeparator())
-			{
-				$this->current_word = "";
-				$this->switchState(self::STATE_READ_VALUE);
-			}
-			else {
-				if ($this->space()) {
-					$this->switchState(self::STATE_SKIP_SPACE);
-				}
-				if ($this->sharp()) {
-					$this->switchState(self::STATE_SKIP_LINE);
-				}
-			}
-			return $this;
-		}
-
-		/**
-		 * Skip space
-         *
-		 * @return RobotsTxtParser
-		 */
-		protected function skipSpace()
-		{
-			$this->char_index++;
-			$this->current_word = mb_substr($this->current_word, -1);
-			return $this;
-		}
-
-		/**
-		 * Skip line
-		 * @return RobotsTxtParser
-		 */
-		protected function skipLine()
-		{
-			$this->char_index++;
-			$this->switchState(self::STATE_ZERO_POINT);
-			return $this;
-		}
-
-		/**
-		 * Read value
-		 * @return RobotsTxtParser
-		 */
-		protected function readValue()
-		{
-			if ($this->newLine()) {
-				$this->addValueToDirective();
-			}
-			elseif ($this->sharp()) {
-				$this->current_word = mb_substr($this->current_word, 0, -1);
-				$this->addValueToDirective();
-			}
-			else {
-				$this->increment();
-			}
-			return $this;
-		}
-
-        /**
-         * Add value to directive based on the directive type
-         */
-		private function addValueToDirective()
-        {
-            switch ($this->current_directive)
-            {
-                case self::DIRECTIVE_USERAGENT:
-                    $this->setUserAgent($this->current_word);
-                    break;
-
-                case self::DIRECTIVE_CRAWL_DELAY:
-                    $this->addRule("floatval", false);
-                    break;
-
-                case self::DIRECTIVE_SITEMAP:
-                case self::DIRECTIVE_CLEAN_PARAM:
-                    $this->addRule();
-                    break;
-
-                case self::DIRECTIVE_HOST:
-                    $this->addRule("trim", false);
-                    break;
-
-                case self::DIRECTIVE_ALLOW:
-                case self::DIRECTIVE_DISALLOW:
-                    if (empty($this->current_word)) {
-                        break;
-                    }
-                    $this->addRule("self::prepareRegexRule");
-                    break;
+        foreach ($this->rules as $userAgent => $directive) {
+            foreach ($directive as $directiveName => $directiveValue) {
+                if (is_array($directiveValue)) {
+                    $this->rules[$userAgent][$directiveName] = array_values(array_unique($directiveValue));
+                }
             }
+        }
+    }
 
-            // clean-up
+    /**
+     * Check if we should switch
+     * @return bool
+     */
+    protected function shouldSwitchToZeroPoint()
+    {
+        return in_array($this->current_word, array(
+            self::DIRECTIVE_ALLOW,
+            self::DIRECTIVE_DISALLOW,
+            self::DIRECTIVE_HOST,
+            self::DIRECTIVE_USERAGENT,
+            self::DIRECTIVE_SITEMAP,
+            self::DIRECTIVE_CRAWL_DELAY,
+            self::DIRECTIVE_CLEAN_PARAM,
+        ), true);
+    }
+
+    /**
+     * Process state ZERO_POINT
+     * @return RobotsTxtParser
+     */
+    protected function zeroPoint()
+    {
+        if ($this->shouldSwitchToZeroPoint()) {
+            $this->switchState(self::STATE_READ_DIRECTIVE);
+        }
+        // unknown directive - skip it
+        elseif ($this->newLine()) {
             $this->current_word = "";
-            $this->switchState(self::STATE_ZERO_POINT);
+            $this->increment();
         }
+        else {
+            $this->increment();
+        }
+        return $this;
+    }
 
-        /**
-         * Set current user agent
-         * @param string $newAgent
-         */
-        private function setUserAgent($newAgent = "*")
+    /**
+     * Read directive
+     *
+     * @return RobotsTxtParser
+     */
+    protected function readDirective()
+    {
+        $this->previous_directive = $this->current_directive;
+        $this->current_directive = mb_strtolower(trim($this->current_word));
+
+        $this->increment();
+
+        if ($this->lineSeparator())
         {
-            $this->userAgent = $newAgent;
-
-            // create empty array if not there yet
-            if (empty($this->rules[$this->userAgent])) {
-                $this->rules[$this->userAgent] = array();
+            $this->current_word = "";
+            $this->switchState(self::STATE_READ_VALUE);
+        }
+        else {
+            if ($this->space()) {
+                $this->switchState(self::STATE_SKIP_SPACE);
+            }
+            if ($this->sharp()) {
+                $this->switchState(self::STATE_SKIP_LINE);
             }
         }
+        return $this;
+    }
 
-        /**
-         * Prepare rule value and set the one
-         * @param callable $convert
-         * @param bool     $append
-         * @return void
-         */
-        private function addRule($convert = null, $append = true)
+    /**
+     * Skip space
+     *
+     * @return RobotsTxtParser
+     */
+    protected function skipSpace()
+    {
+        $this->char_index++;
+        $this->current_word = mb_substr($this->current_word, -1);
+        return $this;
+    }
+
+    /**
+     * Skip line
+     * @return RobotsTxtParser
+     */
+    protected function skipLine()
+    {
+        $this->char_index++;
+        $this->switchState(self::STATE_ZERO_POINT);
+        return $this;
+    }
+
+    /**
+     * Read value
+     * @return RobotsTxtParser
+     */
+    protected function readValue()
+    {
+        if ($this->newLine()) {
+            $this->addValueToDirective();
+        }
+        elseif ($this->sharp()) {
+            $this->current_word = mb_substr($this->current_word, 0, -1);
+            $this->addValueToDirective();
+        }
+        else {
+            $this->increment();
+        }
+        return $this;
+    }
+
+    /**
+     * Add value to directive based on the directive type
+     */
+    private function addValueToDirective()
+    {
+        switch ($this->current_directive)
         {
-            // convert value
-            $value = (!is_null($convert))
-                ? call_user_func($convert, $this->current_word)
-                : $this->current_word;
+            case self::DIRECTIVE_USERAGENT:
+                $this->setUserAgent($this->current_word);
+                break;
 
-            // set to rules
-            if ($append === true) {
-                $this->rules[$this->userAgent][$this->current_directive][] = $value;
-            }
-            else {
-                $this->rules[$this->userAgent][$this->current_directive] = $value;
-            }
+            case self::DIRECTIVE_CRAWL_DELAY:
+                $this->addRule("floatval", false);
+                break;
+
+            case self::DIRECTIVE_SITEMAP:
+            case self::DIRECTIVE_CLEAN_PARAM:
+                $this->addRule();
+                break;
+
+            case self::DIRECTIVE_HOST:
+                $this->addRule("trim", false);
+                break;
+
+            case self::DIRECTIVE_ALLOW:
+            case self::DIRECTIVE_DISALLOW:
+                if (empty($this->current_word)) {
+                    break;
+                }
+                $this->addRule("self::prepareRegexRule");
+                break;
         }
 
-		/**
-		 * Machine step
-		 *
-		 * @return void
-		 */
-		protected function step()
-		{
-			switch ($this->state)
-			{
-				case self::STATE_ZERO_POINT:
-					$this->zeroPoint();
-					break;
+        // clean-up
+        $this->current_word = "";
+        $this->switchState(self::STATE_ZERO_POINT);
+    }
 
-				case self::STATE_READ_DIRECTIVE:
-					$this->readDirective();
-					break;
+    /**
+     * Set current user agent
+     * @param string $newAgent
+     */
+    private function setUserAgent($newAgent = "*")
+    {
+        $this->userAgent = $newAgent;
 
-				case self::STATE_SKIP_SPACE:
-					$this->skipSpace();
-					break;
+        // create empty array if not there yet
+        if (empty($this->rules[$this->userAgent])) {
+            $this->rules[$this->userAgent] = array();
+        }
+    }
 
-				case self::STATE_SKIP_LINE:
-					$this->skipLine();
-					break;
+    /**
+     * Prepare rule value and set the one
+     * @param callable $convert
+     * @param bool     $append
+     * @return void
+     */
+    private function addRule($convert = null, $append = true)
+    {
+        // convert value
+        $value = (!is_null($convert))
+            ? call_user_func($convert, $this->current_word)
+            : $this->current_word;
 
-				case self::STATE_READ_VALUE:
-					$this->readValue();
-					break;
-			}
-		}
+        // set to rules
+        if ($append === true) {
+            $this->rules[$this->userAgent][$this->current_directive][] = $value;
+        }
+        else {
+            $this->rules[$this->userAgent][$this->current_directive] = $value;
+        }
+    }
 
-		/**
-		 * Convert robots.txt rules to php regex
-		 *
-		 * @link https://developers.google.com/webmasters/control-crawl-index/docs/robots_txt
-		 * @param string $value
-		 * @return string
-		 */
-		protected function prepareRegexRule($value)
-		{
-            $value = "/" . ltrim($value, '/');
-			$value = str_replace('$', '\$', $value);
-			$value = str_replace('?', '\?', $value);
-			$value = str_replace('.', '\.', $value);
-			$value = str_replace('*', '.*', $value);
-
-			if (mb_strlen($value) > 2 && mb_substr($value, -2) == '\$') {
-				$value = substr($value, 0, -2).'$';
-			}
-
-			if (mb_strrpos($value, '/') == (mb_strlen($value)-1) ||
-				mb_strrpos($value, '=') == (mb_strlen($value)-1) ||
-				mb_strrpos($value, '?') == (mb_strlen($value)-1)
-			) {
-				$value .= '.*';
-			}
-			return $value;
-		}
-
-		/**
-		 * Common part for the most of the states - skip line and space
-		 *
-		 * @return void
-		 */
-		protected function skip()
-		{
-			if ($this->space()) {
-				$this->switchState(self::STATE_SKIP_SPACE);
-			}
-
-			if ($this->sharp() || $this->newLine()) {
-				$this->switchState(self::STATE_SKIP_LINE);
-			}
-		}
-
-		/**
-		 * Move to the following step
-		 *
-		 * @return void
-		 */
-		protected function increment()
-		{
-			$this->current_char = mb_strtolower(mb_substr($this->content, $this->char_index, 1));
-			$this->current_word .= $this->current_char;
-			$this->current_word = trim($this->current_word);
-			$this->char_index++;
-		}
-
-		/**
-		 * Check url wrapper
-		 *
-		 * @param  string $url       - url to check
-		 * @param  string $userAgent - which robot to check for
-		 * @return bool
-		 */
-		public function isAllowed($url, $userAgent = "*")
-		{
-			return $this->checkRule(self::DIRECTIVE_ALLOW, $url, $userAgent)
-				&& !$this->checkRule(self::DIRECTIVE_DISALLOW, $url, $userAgent);
-		}
-
-		/**
-		 * Check url wrapper
-		 *
-		 * @param  string $url       - url to check
-		 * @param  string $userAgent - which robot to check for
-		 * @return bool
-		 */
-		public function isDisallowed($url, $userAgent = "*")
-		{
-			return $this->checkRule(self::DIRECTIVE_DISALLOW, $url, $userAgent);
-		}
-
-		/**
-		 * Check url rules
-		 *
-		 * @param  string $rule        - which rule to check
-		 * @param  string $value       - url to check
-		 * @param  string $userAgent   - which robot to check for
-		 * @internal param string $url - url to check
-		 * @return bool
-		 */
-		public function checkRule($rule, $value = '/', $userAgent = '*')
-		{
-			$result = false;
-
-			// if there is no rule or a set of rules for user-agent
-			if (!isset($this->rules[$userAgent]) || !isset($this->rules[$userAgent][$rule]))
-			{
-				// check 'For all' category - '*'
-				return ($userAgent != '*') ? $this->checkRule($rule, $value) : false;
-			}
-
-			foreach ($this->rules[$userAgent][$rule] as $robotRule)
-			{
-				if (preg_match('@'.preg_quote($robotRule,'@').'@', $value)) {
-					return true;
-				}
-			}
-
-			return $result;
-		}
-
-		/**
-		 * Sitemaps check wrapper
-		 *
-		 * @param  string $userAgent - which robot to check for
-		 * @return mixed
-		 */
-		public function getSitemaps($userAgent = '*')
-		{
-			// if there is not rule or a set of rules for UserAgent
-			if (!isset($this->rules[$userAgent]) || !isset($this->rules[$userAgent][self::DIRECTIVE_SITEMAP]))
-			{
-				// check for all
-				return ($userAgent != '*') ? $this->getSitemaps() : false;
-			}
-
-			return $this->rules[$userAgent][self::DIRECTIVE_SITEMAP];
-		}
-
-        /**
-         * Get rules based on user agent
-         *
-         * @param string|null $userAgent
-         * @return array
-         */
-        public function getRules($userAgent = null)
+    /**
+     * Machine step
+     *
+     * @return void
+     */
+    protected function step()
+    {
+        switch ($this->state)
         {
-            // return all rules
-            if (is_null($userAgent)) {
-                return $this->rules;
-            }
-            elseif (isset($this->rules[$userAgent])) {
-                return $this->rules[$userAgent];
-            }
-            else {
-                return array();
+            case self::STATE_ZERO_POINT:
+                $this->zeroPoint();
+                break;
+
+            case self::STATE_READ_DIRECTIVE:
+                $this->readDirective();
+                break;
+
+            case self::STATE_SKIP_SPACE:
+                $this->skipSpace();
+                break;
+
+            case self::STATE_SKIP_LINE:
+                $this->skipLine();
+                break;
+
+            case self::STATE_READ_VALUE:
+                $this->readValue();
+                break;
+        }
+    }
+
+    /**
+     * Convert robots.txt rules to php regex
+     *
+     * @link https://developers.google.com/webmasters/control-crawl-index/docs/robots_txt
+     * @param string $value
+     * @return string
+     */
+    protected function prepareRegexRule($value)
+    {
+        $value = "/" . ltrim($value, '/');
+        $value = str_replace('$', '\$', $value);
+        $value = str_replace('?', '\?', $value);
+        $value = str_replace('.', '\.', $value);
+        $value = str_replace('*', '.*', $value);
+
+        if (mb_strlen($value) > 2 && mb_substr($value, -2) == '\$') {
+            $value = substr($value, 0, -2).'$';
+        }
+
+        if (mb_strrpos($value, '/') == (mb_strlen($value)-1) ||
+            mb_strrpos($value, '=') == (mb_strlen($value)-1) ||
+            mb_strrpos($value, '?') == (mb_strlen($value)-1)
+        ) {
+            $value .= '.*';
+        }
+        return $value;
+    }
+
+    /**
+     * Common part for the most of the states - skip line and space
+     *
+     * @return void
+     */
+    protected function skip()
+    {
+        if ($this->space()) {
+            $this->switchState(self::STATE_SKIP_SPACE);
+        }
+
+        if ($this->sharp() || $this->newLine()) {
+            $this->switchState(self::STATE_SKIP_LINE);
+        }
+    }
+
+    /**
+     * Move to the following step
+     *
+     * @return void
+     */
+    protected function increment()
+    {
+        $this->current_char = mb_strtolower(mb_substr($this->content, $this->char_index, 1));
+        $this->current_word .= $this->current_char;
+        $this->current_word = trim($this->current_word);
+        $this->char_index++;
+    }
+
+    /**
+     * Check url wrapper
+     *
+     * @param  string $url       - url to check
+     * @param  string $userAgent - which robot to check for
+     * @return bool
+     */
+    public function isAllowed($url, $userAgent = "*")
+    {
+        return $this->checkRule(self::DIRECTIVE_ALLOW, $url, $userAgent)
+            && !$this->checkRule(self::DIRECTIVE_DISALLOW, $url, $userAgent);
+    }
+
+    /**
+     * Check url wrapper
+     *
+     * @param  string $url       - url to check
+     * @param  string $userAgent - which robot to check for
+     * @return bool
+     */
+    public function isDisallowed($url, $userAgent = "*")
+    {
+        return $this->checkRule(self::DIRECTIVE_DISALLOW, $url, $userAgent);
+    }
+
+    /**
+     * Check url rules
+     *
+     * @param  string $rule        - which rule to check
+     * @param  string $value       - url to check
+     * @param  string $userAgent   - which robot to check for
+     * @internal param string $url - url to check
+     * @return bool
+     */
+    public function checkRule($rule, $value = '/', $userAgent = '*')
+    {
+        $result = false;
+
+        // if there is no rule or a set of rules for user-agent
+        if (!isset($this->rules[$userAgent]) || !isset($this->rules[$userAgent][$rule]))
+        {
+            // check 'For all' category - '*'
+            return ($userAgent != '*') ? $this->checkRule($rule, $value) : false;
+        }
+
+        foreach ($this->rules[$userAgent][$rule] as $robotRule)
+        {
+            if (preg_match('@'.preg_quote($robotRule,'@').'@', $value)) {
+                return true;
             }
         }
 
-        /**
-         * @return string
-         */
-        public function getContent()
+        return $result;
+    }
+
+    /**
+     * Sitemaps check wrapper
+     *
+     * @param  string $userAgent - which robot to check for
+     * @return mixed
+     */
+    public function getSitemaps($userAgent = '*')
+    {
+        // if there is not rule or a set of rules for UserAgent
+        if (!isset($this->rules[$userAgent]) || !isset($this->rules[$userAgent][self::DIRECTIVE_SITEMAP]))
         {
-            return $this->content;
+            // check for all
+            return ($userAgent != '*') ? $this->getSitemaps() : false;
         }
-	}
+
+        return $this->rules[$userAgent][self::DIRECTIVE_SITEMAP];
+    }
+
+    /**
+     * Get rules based on user agent
+     *
+     * @param string|null $userAgent
+     * @return array
+     */
+    public function getRules($userAgent = null)
+    {
+        // return all rules
+        if (is_null($userAgent)) {
+            return $this->rules;
+        }
+        elseif (isset($this->rules[$userAgent])) {
+            return $this->rules[$userAgent];
+        }
+        else {
+            return array();
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+}
