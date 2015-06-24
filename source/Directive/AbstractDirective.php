@@ -13,13 +13,13 @@ abstract class AbstractDirective
     /**
      * @var string
      */
-    protected $name;
+    protected static $name;
 
     /**
      * @return string
      */
-    public function getName() {
-        return $this->name;
+    public static function getName() {
+        return static::$name;
     }
 
     /**
@@ -29,7 +29,7 @@ abstract class AbstractDirective
      */
     public function matches($word)
     {
-        return $word === $this->name;
+        return $word === static::$name;
     }
 
     /**

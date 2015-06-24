@@ -2,7 +2,6 @@
 
 namespace t1gor\RobotsTxt;
 
-use t1gor\RobotsTxt\Repository;
 use \t1gor\RobotsTxt\Content\ContentInterface;
 use \t1gor\RobotsTxt\State\StateInterface;
 use \t1gor\RobotsTxt\State\ZeroPoint;
@@ -43,14 +42,26 @@ class Parser {
     protected $rules = array();
 
     /**
+     * @todo refactor arrays to factory classes?
+     */
+
+    /**
+     * @var array
+     */
+    protected $directives = array();
+
+    /**
+     * @var array
+     */
+    protected $states = array();
+
+    /**
      * Setup default values
      */
     public function __construct()
     {
         // set default state
-        $this->changeState(new ZeroPoint());
-        // an attempt to avoid creating 100500 instances
-        $this->repo = new Repository();
+        $this->setState(new ZeroPoint());
     }
 
     /**
@@ -71,10 +82,18 @@ class Parser {
     }
 
     /**
+     * @return \t1gor\RobotsTxt\Content\ContentInterface
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
      * @param StateInterface $state
      * @return $this
      */
-    protected function changeState(StateInterface $state)
+    public function setState(StateInterface $state)
     {
         $this->state = $state;
         return $this;
@@ -91,6 +110,9 @@ class Parser {
             $this->step();
         }
 
+        /**
+         * @todo rewrite this to new interface
+         */
         foreach ($this->rules as $userAgent => $directive) {
             foreach ($directive as $directiveName => $directiveValue) {
                 if (is_array($directiveValue)) {
@@ -102,71 +124,20 @@ class Parser {
 
     /**
      * Machine step
-     *
-     * @return void
-     */
-    protected function step()
-    {
-        switch ($this->state)
-        {
-            case ($this->state instanceof ZeroPoint):
-                $this->zeroPoint();
-                break;
-
-            case ($this->state instanceof ReadDirective):
-                $this->readDirective();
-                break;
-
-            case ($this->state instanceof SkipSpace):
-                $this->skipSpace();
-                break;
-
-            case ($this->state instanceof SkipLine):
-                $this->skipLine();
-                break;
-
-            case ($this->state instanceof ReadValue):
-                $this->readValue();
-                break;
-        }
-    }
-
-    /**
-     * Check if we should switch
-     * @return bool
-     */
-    protected function shouldSwitchToZeroPoint()
-    {
-        return in_array($this->content->getCurrentWord(), array(
-            $this->repo->get('\t1gor\RobotsTxt\Directive\Allow')->getName(),
-            $this->repo->get('\t1gor\RobotsTxt\Directive\Disallow')->getName(),
-            $this->repo->get('\t1gor\RobotsTxt\Directive\Host')->getName(),
-            $this->repo->get('\t1gor\RobotsTxt\Directive\UserAgent')->getName(),
-            $this->repo->get('\t1gor\RobotsTxt\Directive\SiteMap')->getName(),
-            $this->repo->get('\t1gor\RobotsTxt\Directive\CrawlDelay')->getName(),
-            $this->repo->get('\t1gor\RobotsTxt\Directive\CleanParam')->getName()
-        ), true);
-    }
-
-    /**
-     * Process state ZERO_POINT
      * @return $this
      */
-    protected function zeroPoint()
+    protected function step() {
+        return $this->state->process($this);
+    }
+
+    /**
+     * Public method to advance internal state
+     * @return $this
+     */
+    public function switchDirectives()
     {
-        if ($this->shouldSwitchToZeroPoint()) {
-            $this->changeState(
-                $this->repository->get('ZeroPoint')
-            );
-        }
-        // unknown directive - skip it
-        elseif ($this->newLine()) {
-            $this->current_word = "";
-            $this->increment();
-        }
-        else {
-            $this->increment();
-        }
+        $this->state->setPreviousDirective($this->state->getCurrentDirective());
+        $this->state->setCurrentDirective($this->content->getDirectiveFromCurrentWord());
         return $this;
     }
 }

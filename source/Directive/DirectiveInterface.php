@@ -11,7 +11,7 @@ interface DirectiveInterface
     /**
      * @return string
      */
-    public function getName();
+    public static function getName();
 
     /**
      * @param string $word

@@ -2,6 +2,8 @@
 
 namespace t1gor\RobotsTxt\Content;
 
+use t1gor\RobotsTxt\Directive\DirectiveInterface;
+
 /**
  * Interface ContentInterface
  * @package t1gor\RobotsTxt\Content
@@ -46,4 +48,52 @@ interface ContentInterface
      * @return int
      */
     public function length();
+
+    /**
+     * @return bool
+     */
+    public function isNewLine();
+
+    /**
+     * Move cursor pointer
+     * @return $this
+     */
+    public function increment();
+
+    /**
+     * Set current word to ''.
+     * @return $this
+     */
+    public function flushWord();
+
+    /**
+     * @return DirectiveInterface
+     */
+    public function getDirectiveFromCurrentWord();
+
+    /**
+     * Key : value pair separator signal
+     * @return bool
+     */
+    public function isLineSeparator();
+
+    /**
+     * @return bool
+     */
+    public function isSpace();
+
+    /**
+     * @return bool
+     */
+    public function isSharp();
+
+    /**
+     * @return $this
+     */
+    public function removeLastCharFromCurrentWord();
+
+    /**
+     * @return $this
+     */
+    public function setWordToLastChar();
 }

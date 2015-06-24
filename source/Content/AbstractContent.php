@@ -5,6 +5,7 @@ namespace t1gor\RobotsTxt\Content;
 use \Countable;
 use \LengthException;
 use \OutOfRangeException;
+use \t1gor\RobotsTxt\Directive\DirectiveInterface;
 
 /**
  * Class AbstractContent
@@ -39,6 +40,16 @@ abstract class AbstractContent implements Countable
      * @var int
      */
     protected $charIndex = 0;
+
+    /**
+     * @var string
+     */
+    protected $word = '';
+
+    /**
+     * @var string
+     */
+    protected $char = '';
 
     /**
      * @param string $encoding
@@ -86,33 +97,100 @@ abstract class AbstractContent implements Countable
      * @throws \OutOfRangeException
      */
     public function getCurrentChar() {
-        // is content present?
-        if ($this->content === '') {
-            throw new LengthException('No content found.');
-        }
+        return $this->char;
+    }
 
-        // is char index char available?
-        if ($this->charIndex < 0 || $this->charIndex > $this->contentLength) {
-            throw new OutOfRangeException("Char {$this->charIndex} can not be read.");
-        }
-
-        // normal flow
-        return substr($this->content, $this->charIndex, 1);
+    /**
+     * @return string
+     */
+    public function getCurrentWord() {
+        return $this->word;
     }
 
     /**
      * @return int
      */
-    public function getCharIndex()
-    {
-        return $this->charIndex;
+    public function getCharIndex() {
+        return (int) $this->charIndex;
     }
 
-    public function isNewLine()
+    /**
+     * @return bool
+     * @throws \LogicException
+     */
+    public function isNewLine() {
+        return array_key_exists(PHP_EOL, array($this->word, $this->char));
+    }
+
+    /**
+     * Key : value pair separator signal
+     * @return bool
+     */
+    public function isLineSeparator() {
+        return ($this->char === ':');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSpace() {
+        return ($this->char === '\s');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSharp() {
+        return ($this->char === '#');
+    }
+
+    /**
+     * Move cursor pointer
+     * @return $this
+     */
+    public function increment()
     {
-        return in_array(PHP_EOL, array(
-            $this->getCurrentChar(),
-            $this->getCurrentWord()
-        ));
+        $this->char = mb_strtolower(mb_substr($this->content, $this->charIndex, 1));
+        $this->word .= $this->char;
+        $this->word = trim($this->word);
+        $this->charIndex++;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function flushWord()
+    {
+        $this->word = '';
+        return $this;
+    }
+
+    /**
+     * @return DirectiveInterface
+     */
+    public function getDirectiveFromCurrentWord()
+    {
+        $dName = mb_strtolower(trim($this->getCurrentWord()));
+        return new $dName();
+    }
+
+    /**
+     * Simply remove last char
+     * @return $this
+     */
+    public function removeLastCharFromCurrentWord()
+    {
+        $this->word = mb_substr($this->word, 0, -1);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setWordToLastChar()
+    {
+        $this->word = mb_substr($this->word, -1);
+        return $this;
     }
 }

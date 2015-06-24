@@ -9,9 +9,7 @@ namespace t1gor\RobotsTxt\Directive;
 final class Sitemap extends AbstractDirective implements DirectiveInterface
 {
     /**
-     * Set directive name
+     * @var string
      */
-    public function __construct() {
-        $this->name = 'sitemap';
-    }
+    protected static $name = 'sitemap';
 }

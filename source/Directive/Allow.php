@@ -9,9 +9,7 @@ namespace t1gor\RobotsTxt\Directive;
 final class Allow extends AbstractDirective implements DirectiveInterface
 {
     /**
-     * Set directive name
+     * @var string
      */
-    public function __construct() {
-        $this->name = 'allow';
-    }
+    protected static $name = 'allow';
 }

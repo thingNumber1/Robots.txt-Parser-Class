@@ -9,9 +9,7 @@ namespace t1gor\RobotsTxt\Directive;
 final class CleanParam extends AbstractDirective implements DirectiveInterface
 {
     /**
-     * Set directive name
+     * @var string
      */
-    public function __construct() {
-        $this->name = 'clean-param';
-    }
+    protected static $name = 'clean-param';
 }

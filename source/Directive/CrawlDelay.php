@@ -9,9 +9,7 @@ namespace t1gor\RobotsTxt\Directive;
 final class CrawlDelay extends AbstractDirective implements DirectiveInterface
 {
     /**
-     * Set directive name
+     * @var string
      */
-    public function __construct() {
-        $this->name = 'crawl-delay';
-    }
+    protected static $name = 'crawl-delay';
 }

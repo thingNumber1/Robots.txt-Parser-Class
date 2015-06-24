@@ -20,6 +20,13 @@ final class File extends AbstractContent implements ContentInterface
     protected $filePath;
 
     /**
+     * @param string $filePath
+     */
+    public function __construct($filePath) {
+        $this->filePath = $filePath;
+    }
+
+    /**
      * Should set internal content var and return an instance of self
      * @return $this
      * @throws FileNotFound
