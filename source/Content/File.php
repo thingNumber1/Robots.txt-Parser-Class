@@ -2,8 +2,8 @@
 
 namespace t1gor\RobotsTxt\Content;
 
-use t1gor\RobotsTxt\Content\File\Exception\NotFound as FileNotFound;
-use t1gor\RobotsTxt\Content\File\Exception\NotReadable as FileNotReadable;
+use \t1gor\RobotsTxt\Content\File\Exception\NotFound as FileNotFound;
+use \t1gor\RobotsTxt\Content\File\Exception\NotReadable as FileNotReadable;
 
 /**
  * Class ContentFile
@@ -47,13 +47,5 @@ final class File extends AbstractContent implements ContentInterface
         $this->content = file_get_contents($this->filePath);
         $this->contentLength = mb_strlen($this->content, $this->encoding);
         return $this;
-    }
-
-    /**
-     * @return string
-     * @throws \BadMethodCallException
-     */
-    public function getCurrentWord() {
-        throw new \BadMethodCallException('Not implemented.');
     }
 }

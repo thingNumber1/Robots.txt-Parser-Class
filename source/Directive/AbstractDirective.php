@@ -3,6 +3,7 @@
 namespace t1gor\RobotsTxt\Directive;
 
 use \BadMethodCallException;
+use \t1gor\RobotsTxt\Parser;
 
 /**
  * Interface DirectiveInterface
@@ -33,13 +34,13 @@ abstract class AbstractDirective
     }
 
     /**
-     * By default - not implemented
-     * @return string
-     * @throws \BadMethodCallException
+     * By default - simply add rule
+     * @param Parser $p
+     * @return void
      */
-    public function getValue()
+    public function addRule(Parser $p)
     {
-        throw new BadMethodCallException('Not implemented');
+        $p->addRule();
     }
 
     /**

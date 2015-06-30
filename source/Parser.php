@@ -123,8 +123,12 @@ class Parser {
      */
     public function switchDirectives()
     {
-        $this->state->setPreviousDirective($this->state->getCurrentDirective());
-        $this->state->setCurrentDirective($this->content->getDirectiveFromCurrentWord());
+        $cDirective = $this->state->getCurrentDirective();
+        $this->state->setPreviousDirective($cDirective);
+
+        $newDirective = $this->content->getDirectiveFromCurrentWord();
+        $this->state->setCurrentDirective($newDirective);
+
         return $this;
     }
 
