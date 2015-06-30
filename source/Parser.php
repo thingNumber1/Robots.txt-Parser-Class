@@ -5,10 +5,6 @@ namespace t1gor\RobotsTxt;
 use \t1gor\RobotsTxt\Content\ContentInterface;
 use \t1gor\RobotsTxt\State\StateInterface;
 use \t1gor\RobotsTxt\State\ZeroPoint;
-use \t1gor\RobotsTxt\State\ReadDirective;
-use \t1gor\RobotsTxt\State\SkipSpace;
-use \t1gor\RobotsTxt\State\SkipLine;
-use \t1gor\RobotsTxt\State\ReadValue;
 
 /**
  * Class for parsing robots.txt files
@@ -42,18 +38,9 @@ class Parser {
     protected $rules = array();
 
     /**
-     * @todo refactor arrays to factory classes?
+     * @var string
      */
-
-    /**
-     * @var array
-     */
-    protected $directives = array();
-
-    /**
-     * @var array
-     */
-    protected $states = array();
+    protected $userAgent = '*';
 
     /**
      * Setup default values
@@ -139,5 +126,53 @@ class Parser {
         $this->state->setPreviousDirective($this->state->getCurrentDirective());
         $this->state->setCurrentDirective($this->content->getDirectiveFromCurrentWord());
         return $this;
+    }
+
+    /**
+     * Proxy as state is protected
+     * @return Directive\DirectiveInterface
+     */
+    public function getCurrentDirective()
+    {
+        return $this->state->getCurrentDirective();
+    }
+
+    /**
+     * Set current user agent
+     * @param string $newAgent
+     */
+    public function setUserAgent($newAgent = '*')
+    {
+        $this->userAgent = $newAgent;
+
+        // create empty array if not there yet
+        if (empty($this->rules[$this->userAgent])) {
+            $this->rules[$this->userAgent] = array();
+        }
+    }
+
+    /**
+     * Prepare rule value and set the one
+     * @param callable $convert
+     * @param bool     $append
+     * @return void
+     */
+    public function addRule(callable $convert = null, $append = true)
+    {
+        $cWord = $this->getContent()->getCurrentWord();
+        $dName = $this->state->getCurrentDirective()->getName();
+
+        // convert value
+        $value = (null !== $convert)
+            ? call_user_func($convert, $cWord)
+            : $cWord;
+
+        // set to rules
+        if ($append === true) {
+            $this->rules[$this->userAgent][$dName][] = $value;
+        }
+        else {
+            $this->rules[$this->userAgent][$dName] = $value;
+        }
     }
 }

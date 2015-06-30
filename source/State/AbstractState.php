@@ -16,12 +16,12 @@ abstract class AbstractState
     protected $name;
 
     /**
-     * @var \t1gor\RobotsTxt\Directive\DirectiveInterface
+     * @var DirectiveInterface
      */
     protected $currentDirective;
 
     /**
-     * @var \t1gor\RobotsTxt\Directive\DirectiveInterface
+     * @var DirectiveInterface
      */
     protected $previousDirective;
 

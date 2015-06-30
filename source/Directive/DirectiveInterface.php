@@ -2,6 +2,8 @@
 
 namespace t1gor\RobotsTxt\Directive;
 
+use \t1gor\RobotsTxt\Parser;
+
 /**
  * Interface DirectiveInterface
  * @package t1gor\RobotsTxt\Directive
@@ -20,7 +22,8 @@ interface DirectiveInterface
     public function matches($word);
 
     /**
-     * @return string
+     * @param Parser $p
+     * @return void
      */
-    public function getValue();
+    public function addRule(Parser $p);
 }
