@@ -13,5 +13,6 @@ install:
   - ls -l ./test/_data/
   - sudo chmod 0444 ./test/_data/non.readable.txt
   - sudo chown www-data:www-data ./test/_data/non.readable.txt
+  - ls -l ./test/_data/
 after_script:
   - CODECLIMATE_REPO_TOKEN=badc29b931533dd8efb832ffff7bf8dbc31486290ae3b1c81d38fa677795ffaf ./vendor/bin/test-reporter
