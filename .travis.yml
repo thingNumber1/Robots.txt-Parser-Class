@@ -12,7 +12,7 @@ matrix:
 before_install:
   - composer selfupdate
 install:
-  - composer install
+  - composer update
   - sudo chmod 0400 ./test/_data/non.readable.txt
   - sudo chown www-data:www-data ./test/_data/non.readable.txt
 after_script:
