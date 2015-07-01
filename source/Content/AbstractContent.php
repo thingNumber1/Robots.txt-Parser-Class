@@ -5,6 +5,7 @@ namespace t1gor\RobotsTxt\Content;
 use \Countable;
 use \LengthException;
 use \OutOfRangeException;
+use \t1gor\RobotsTxt\Content\Exception\InvalidEncoding;
 use \t1gor\RobotsTxt\Directive\DirectiveInterface;
 
 /**
@@ -52,13 +53,17 @@ abstract class AbstractContent implements Countable
     protected $char = '';
 
     /**
+     * @note Error will be suppressed, but exception will be thrown instead.
      * @param string $encoding
      * @return $this
+     * @throws \t1gor\RobotsTxt\Content\Exception\InvalidEncoding
      */
     public function setEncoding($encoding = self::DEFAULT_ENCODING)
     {
         // set MB encoding
-        mb_internal_encoding($encoding);
+        if (false === @mb_internal_encoding($encoding)) {
+            throw new InvalidEncoding('Encoding "'.$encoding.'" is not supported by php.');
+        }
 
         // save for reference
         $this->encoding = $encoding;

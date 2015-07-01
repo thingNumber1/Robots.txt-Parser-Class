@@ -11,6 +11,12 @@ use t1gor\RobotsTxt\Directive\DirectiveInterface;
 interface ContentInterface
 {
     /**
+     * @param mixed $source
+     * @return mixed
+     */
+    public function __construct($source);
+
+    /**
      * Set content encoding
      * @param string $encoding
      * @return $this

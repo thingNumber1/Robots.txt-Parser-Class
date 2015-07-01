@@ -26,7 +26,7 @@
         "classmap": [ "source" ]
     },
     "autoload-dev": {
-      "classmap": [ "source", "vendor" ]
+      "classmap": [ "source", "test", "vendor" ]
     },
     "extra": {
         "branch-alias": {

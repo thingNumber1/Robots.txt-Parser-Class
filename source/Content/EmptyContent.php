@@ -6,11 +6,20 @@ namespace t1gor\RobotsTxt\Content;
  * Class EmptyContent
  *
  * Can be used for unit tests ?
- *
+ * @coverageIgnore
  * @package t1gor\RobotsTxt\Content
  */
 final class EmptyContent extends AbstractContent implements ContentInterface
 {
+    /**
+     * @param mixed $source
+     * @return mixed
+     */
+    public function __construct($source = null)
+    {
+        // do nothing
+    }
+
     /**
      * Should set internal content var and return an instance of self
      * @return $this

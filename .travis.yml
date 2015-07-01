@@ -13,7 +13,6 @@ before_install:
   - composer selfupdate
 install:
   - composer update
-  - sudo chmod 0400 ./test/_data/non.readable.txt
-  - sudo chown www-data:www-data ./test/_data/non.readable.txt
+  - sudo sh ./bin/prepare-for-test.sh
 after_script:
   - CODECLIMATE_REPO_TOKEN=badc29b931533dd8efb832ffff7bf8dbc31486290ae3b1c81d38fa677795ffaf ./vendor/bin/test-reporter
