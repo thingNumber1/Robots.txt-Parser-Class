@@ -11,7 +11,7 @@ before_install:
 install:
   - composer install
   - ls -l ./test/_data/
-  - sudo chmod 0444 ./test/_data/non.readable.txt
+  - sudo chmod 0440 ./test/_data/non.readable.txt
   - sudo chown www-data:www-data ./test/_data/non.readable.txt
   - ls -l ./test/_data/
 after_script:
