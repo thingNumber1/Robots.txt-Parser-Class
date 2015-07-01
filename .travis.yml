@@ -6,12 +6,15 @@ php:
   - 5.4
   - 5.3
   - hhvm
+matrix:
+  allow_failures:
+    - php: hhvm
 before_install:
   - composer selfupdate
 install:
   - composer install
   - ls -l ./test/_data/
-  - sudo chmod 0440 ./test/_data/non.readable.txt
+  - sudo chmod 0400 ./test/_data/non.readable.txt
   - sudo chown www-data:www-data ./test/_data/non.readable.txt
   - ls -l ./test/_data/
 after_script:
