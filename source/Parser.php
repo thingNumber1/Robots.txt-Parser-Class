@@ -35,7 +35,7 @@ class Parser {
     /**
      * @var array
      */
-    protected $rules = array();
+    protected $rules = [];
 
     /**
      * @var string
@@ -151,7 +151,7 @@ class Parser {
 
         // create empty array if not there yet
         if (empty($this->rules[$this->userAgent])) {
-            $this->rules[$this->userAgent] = array();
+            $this->rules[$this->userAgent] = [];
         }
     }
 

@@ -124,7 +124,7 @@ abstract class AbstractContent implements Countable
      * @throws \LogicException
      */
     public function isNewLine() {
-        return array_key_exists(PHP_EOL, array($this->word, $this->char));
+        return array_key_exists(PHP_EOL, [$this->word, $this->char]);
     }
 
     /**

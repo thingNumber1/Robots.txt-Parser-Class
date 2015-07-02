@@ -29,7 +29,7 @@ final class ZeroPoint extends AbstractState implements StateInterface
      */
     protected function shouldSwitchToZeroPoint($currentWord)
     {
-        return in_array($currentWord, array(
+        return in_array($currentWord, [
             Allow::getName(),
             Disallow::getName(),
             Host::getName(),
@@ -37,7 +37,7 @@ final class ZeroPoint extends AbstractState implements StateInterface
             SiteMap::getName(),
             CrawlDelay::getName(),
             CleanParam::getName()
-        ), true);
+        ], true);
     }
 
     /**

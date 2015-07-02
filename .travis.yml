@@ -1,18 +1,29 @@
+# general
 language: php
 sudo: true
+
+# target php versions
+# no php 5.3 as it is no longer maintained
 php:
   - 5.6
   - 5.5
   - 5.4
-  - 5.3
   - hhvm
+
+# allow HHVM to fail
 matrix:
   allow_failures:
     - php: hhvm
+
+# update composer dist
 before_install:
   - composer selfupdate
+
+# install dependancies
 install:
   - composer update
   - sudo sh ./bin/prepare-for-test.sh
+
+# report code coverage
 after_script:
   - CODECLIMATE_REPO_TOKEN=badc29b931533dd8efb832ffff7bf8dbc31486290ae3b1c81d38fa677795ffaf ./vendor/bin/test-reporter

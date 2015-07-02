@@ -27,6 +27,6 @@ final class Allow extends AbstractDirective implements DirectiveInterface
             return;
         }
 
-        $p->addRule(array('AbstractDirective', 'prepareRegexRule'));
+        $p->addRule(['AbstractDirective', 'prepareRegexRule']);
     }
 }
