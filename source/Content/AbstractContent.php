@@ -58,10 +58,17 @@ abstract class AbstractContent implements Countable, ContentInterface
      */
     public function setEncoding($encoding = self::DEFAULT_ENCODING)
     {
+        // swap to avoid using "@"
+        $errorReporting = error_reporting();
+        error_reporting(0);
+
         // set MB encoding
-        if (false === @mb_internal_encoding($encoding)) {
+        if (false === mb_internal_encoding($encoding)) {
             throw new InvalidEncoding('Encoding "'.$encoding.'" is not supported by php.');
         }
+
+        // and then restore
+        error_reporting($errorReporting);
 
         // save for reference
         $this->encoding = $encoding;
