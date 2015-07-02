@@ -3,6 +3,7 @@
 namespace t1gor\RobotsTxt;
 
 use \t1gor\RobotsTxt\Content\ContentInterface;
+use \t1gor\RobotsTxt\Rules\RuleSet;
 use \t1gor\RobotsTxt\State\StateInterface;
 use \t1gor\RobotsTxt\State\ZeroPoint;
 
@@ -33,9 +34,9 @@ class Parser {
     protected $content;
 
     /**
-     * @var array
+     * @var \t1gor\RobotsTxt\Rules\RuleSet
      */
-    protected $rules = [];
+    protected $rules;
 
     /**
      * @var string
@@ -49,6 +50,9 @@ class Parser {
     {
         // set default state
         $this->setState(new ZeroPoint());
+
+        // init object
+        $this->rules = new RuleSet();
     }
 
     /**
@@ -94,7 +98,7 @@ class Parser {
     {
         // while have content - go!
         while ($this->content->getCharIndex() <= $this->content->length()) {
-            $this->step();
+            $this->state->process($this);
         }
 
         /**
@@ -107,14 +111,6 @@ class Parser {
                 }
             }
         }
-    }
-
-    /**
-     * Machine step
-     * @return $this
-     */
-    protected function step() {
-        return $this->state->process($this);
     }
 
     /**
@@ -133,50 +129,18 @@ class Parser {
     }
 
     /**
-     * Proxy as state is protected
-     * @return Directive\DirectiveInterface
+     * @return \t1gor\RobotsTxt\State\StateInterface
      */
-    public function getCurrentDirective()
+    public function getState()
     {
-        return $this->state->getCurrentDirective();
+        return $this->state;
     }
 
     /**
-     * Set current user agent
-     * @param string $newAgent
+     * @return \t1gor\RobotsTxt\Rules\RuleSet
      */
-    public function setUserAgent($newAgent = '*')
+    public function getRules()
     {
-        $this->userAgent = $newAgent;
-
-        // create empty array if not there yet
-        if (empty($this->rules[$this->userAgent])) {
-            $this->rules[$this->userAgent] = [];
-        }
-    }
-
-    /**
-     * Prepare rule value and set the one
-     * @param callable $convert
-     * @param bool     $append
-     * @return void
-     */
-    public function addRule(callable $convert = null, $append = true)
-    {
-        $cWord = $this->getContent()->getCurrentWord();
-        $dName = $this->state->getCurrentDirective()->getName();
-
-        // convert value
-        $value = (null !== $convert)
-            ? call_user_func($convert, $cWord)
-            : $cWord;
-
-        // set to rules
-        if ($append === true) {
-            $this->rules[$this->userAgent][$dName][] = $value;
-        }
-        else {
-            $this->rules[$this->userAgent][$dName] = $value;
-        }
+        return $this->rules;
     }
 }
