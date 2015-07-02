@@ -1,7 +1,5 @@
 <?php
 
-use \t1gor\RobotsTxt\Content\EmptyContent;
-
 /**
  * Class AbstractContentTest
  */

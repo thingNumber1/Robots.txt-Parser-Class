@@ -5,8 +5,8 @@ namespace t1gor\RobotsTxt\Content;
 /**
  * Class EmptyContent
  *
- * Can be used for unit tests ?
- * @coverageIgnore
+ * Can be used for unit tests, please do not use this class otherwise.
+ * @codeCoverageIgnore
  * @package t1gor\RobotsTxt\Content
  */
 final class EmptyContent extends AbstractContent implements ContentInterface
@@ -15,8 +15,7 @@ final class EmptyContent extends AbstractContent implements ContentInterface
      * @param mixed $source
      * @return mixed
      */
-    public function __construct($source = null)
-    {
+    public function __construct($source = null) {
         // do nothing
     }
 
@@ -29,10 +28,16 @@ final class EmptyContent extends AbstractContent implements ContentInterface
     }
 
     /**
-     * @return string
      * @throws \BadMethodCallException
      */
     public function getCurrentWord() {
+        throw new \BadMethodCallException('Not applicable.');
+    }
+
+    /**
+     * @throws \BadMethodCallException
+     */
+    public function getCurrentChar() {
         throw new \BadMethodCallException('Not applicable.');
     }
 }

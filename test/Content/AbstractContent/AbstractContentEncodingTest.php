@@ -17,6 +17,7 @@ class AbstractContentEncodingTest extends \AbstractContentTest
         $inst = $this->content->setEncoding($encoding);
         $this->assertInstanceOf('\t1gor\RobotsTxt\Content\ContentInterface', $inst);
         $this->assertEquals($encoding, $this->content->getEncoding());
+        $this->assertEquals($encoding, mb_internal_encoding());
     }
 
     /**
