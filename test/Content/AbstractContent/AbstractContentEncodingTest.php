@@ -22,6 +22,7 @@ class AbstractContentEncodingTest extends \AbstractContentTest
     }
 
     /**
+     * @expectedException PHPUnit_Framework_Error
      * @expectedException \t1gor\RobotsTxt\Content\Exception\InvalidEncoding
      * @covers \t1gor\RobotsTxt\Content\AbstractContent::setEncoding
      */
