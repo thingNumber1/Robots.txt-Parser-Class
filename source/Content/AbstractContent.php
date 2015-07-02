@@ -69,14 +69,6 @@ abstract class AbstractContent implements Countable, ContentInterface
     }
 
     /**
-     * @return string
-     */
-    public function getEncoding()
-    {
-        return $this->encoding;
-    }
-
-    /**
      * @return int
      */
     public function count()
@@ -111,7 +103,7 @@ abstract class AbstractContent implements Countable, ContentInterface
      * Move cursor pointer
      * @return $this
      */
-    public function increment()
+    protected function increment()
     {
         $this->char = mb_strtolower(mb_substr($this->content, $this->charIndex, 1));
         $this->word .= $this->char;

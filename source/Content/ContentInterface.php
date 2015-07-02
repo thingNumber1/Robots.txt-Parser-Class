@@ -22,12 +22,6 @@ interface ContentInterface
     public function setEncoding($encoding);
 
     /**
-     * Get current content encoding
-     * @return string
-     */
-    public function getEncoding();
-
-    /**
      * Should set internal content var and return an instance of self
      * @return $this
      */
@@ -42,7 +36,7 @@ interface ContentInterface
      * Move cursor pointer
      * @return $this
      */
-    public function increment();
+    // protected function increment();
 
     /**
      * @return string
