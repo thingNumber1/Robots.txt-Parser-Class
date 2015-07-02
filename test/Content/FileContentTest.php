@@ -4,6 +4,7 @@ use \t1gor\RobotsTxt\Content\File;
 
 /**
  * Class FileContentTest
+ * @group content
  */
 class FileContentTest extends \PHPUnit_Framework_TestCase
 {

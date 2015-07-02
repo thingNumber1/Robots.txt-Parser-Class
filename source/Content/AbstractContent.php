@@ -3,16 +3,14 @@
 namespace t1gor\RobotsTxt\Content;
 
 use \Countable;
-use \LengthException;
-use \OutOfRangeException;
+use \t1gor\RobotsTxt\Content\Helper;
 use \t1gor\RobotsTxt\Content\Exception\InvalidEncoding;
-use \t1gor\RobotsTxt\Directive\DirectiveInterface;
 
 /**
  * Class AbstractContent
  * @package t1gor\RobotsTxt\Parser
  */
-abstract class AbstractContent implements Countable
+abstract class AbstractContent implements Countable, ContentInterface
 {
     /**
      * default encoding
@@ -80,15 +78,6 @@ abstract class AbstractContent implements Countable
     }
 
     /**
-     * Alias for count
-     * @return int
-     */
-    public function length()
-    {
-        return $this->count();
-    }
-
-    /**
      * @return int
      */
     public function count()
@@ -120,36 +109,6 @@ abstract class AbstractContent implements Countable
     }
 
     /**
-     * @return bool
-     * @throws \LogicException
-     */
-    public function isNewLine() {
-        return array_key_exists(PHP_EOL, [$this->word, $this->char]);
-    }
-
-    /**
-     * Key : value pair separator signal
-     * @return bool
-     */
-    public function isLineSeparator() {
-        return ($this->char === ':');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSpace() {
-        return ($this->char === '\s');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSharp() {
-        return ($this->char === '#');
-    }
-
-    /**
      * Move cursor pointer
      * @return $this
      */
@@ -163,39 +122,20 @@ abstract class AbstractContent implements Countable
     }
 
     /**
+     * @param string $word
      * @return $this
      */
-    public function flushWord()
+    public function setWord($word)
     {
-        $this->word = '';
+        $this->word = $word;
         return $this;
     }
 
     /**
-     * @return DirectiveInterface
+     * @return \t1gor\RobotsTxt\Content\Helper
      */
-    public function getDirectiveFromCurrentWord()
+    public function getHelper()
     {
-        $dName = mb_strtolower(trim($this->getCurrentWord()));
-        return new $dName();
-    }
-
-    /**
-     * Simply remove last char
-     * @return $this
-     */
-    public function removeLastCharFromCurrentWord()
-    {
-        $this->word = mb_substr($this->word, 0, -1);
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setWordToLastChar()
-    {
-        $this->word = mb_substr($this->word, -1);
-        return $this;
+        return new Helper($this);
     }
 }

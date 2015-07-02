@@ -31,6 +31,7 @@ final class String extends AbstractContent implements ContentInterface
     public function read() {
         $this->content = $this->string;
         $this->contentLength = mb_strlen($this->content, $this->encoding);
+        $this->increment();
         return $this;
     }
 }

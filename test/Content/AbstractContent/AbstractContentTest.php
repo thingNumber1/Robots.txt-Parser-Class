@@ -4,6 +4,7 @@ use \t1gor\RobotsTxt\Content\EmptyContent;
 
 /**
  * Class AbstractContentTest
+ * @group content
  */
 abstract class AbstractContentTest extends \PHPUnit_Framework_TestCase
 {

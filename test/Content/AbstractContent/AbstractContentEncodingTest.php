@@ -4,6 +4,7 @@ use \t1gor\RobotsTxt\Content\EmptyContent;
 
 /**
  * Class AbstractContentTest
+ * @group content
  */
 class AbstractContentEncodingTest extends \AbstractContentTest
 {
@@ -47,14 +48,14 @@ class AbstractContentEncodingTest extends \AbstractContentTest
      */
     public function correctEncodingProvider()
     {
-        return array(
-            array('UTF-8'),
-            array('ISO-8859-1'),
-            array('Windows-1251'),
-            array('8bit'),
-            array('HZ'),
-            array('HTML-ENTITIES'),
-            array('UTF-32'),
-        );
+        return [
+            ['UTF-8'],
+            ['ISO-8859-1'],
+            ['Windows-1251'],
+            ['8bit'],
+            ['HZ'],
+            ['HTML-ENTITIES'],
+            ['UTF-32'],
+        ];
     }
 }

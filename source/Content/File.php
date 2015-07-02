@@ -46,6 +46,8 @@ final class File extends AbstractContent implements ContentInterface
         // set to internal (content and length)
         $this->content = file_get_contents($this->filePath);
         $this->contentLength = mb_strlen($this->content, $this->encoding);
+        $this->increment();
+
         return $this;
     }
 }
