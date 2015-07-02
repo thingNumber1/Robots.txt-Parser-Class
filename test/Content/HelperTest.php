@@ -15,9 +15,14 @@ class HelperTest extends \PHPUnit_Framework_TestCase
     public function testConstruct()
     {
         $sContent = new String('some string content');
-        $h = $sContent->getHelper();
-        $this->assertAttributeInstanceOf('\t1gor\RobotsTxt\Content\ContentInterface', 'content', $h);
-        $this->assertAttributeInstanceOf('\t1gor\RobotsTxt\Content\String', 'content', $h);
+        $this->assertAttributeInstanceOf(
+            '\t1gor\RobotsTxt\Content\ContentInterface',
+            'content', $sContent->getHelper()
+        );
+        $this->assertAttributeInstanceOf(
+            '\t1gor\RobotsTxt\Content\String',
+            'content', $sContent->getHelper()
+        );
     }
 
     /**
@@ -33,8 +38,7 @@ class HelperTest extends \PHPUnit_Framework_TestCase
         $sContent->read();
 
         // build helper
-        $h = $sContent->getHelper();
-        $this->assertEquals($result, $h->isNewLine());
+        $this->assertEquals($result, $sContent->getHelper()->isNewLine());
     }
 
     /**
