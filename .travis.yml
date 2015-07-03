@@ -41,4 +41,4 @@ script:
 
 # report code coverage
 after_script:
-  - if [[ "hhvm" == "$TRAVIS_PHP_VERSION" ]]; then echo "HHVM - skip coverage reporter" ; else ./vendor/bin/test-reporter ; fi
+  - if [[ "hhvm" == "$TRAVIS_PHP_VERSION" ]]; then echo "HHVM - skip coverage reporter" && exit 0 ; else ./vendor/bin/test-reporter ; fi
