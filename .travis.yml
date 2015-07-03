@@ -17,9 +17,10 @@ matrix:
   allow_failures:
     - php: hhvm
 
-# move CodeClimate token to environment var
-env:
-  - CODECLIMATE_REPO_TOKEN=badc29b931533dd8efb832ffff7bf8dbc31486290ae3b1c81d38fa677795ffaf
+# move CodeClimate token here
+addons:
+  code_climate:
+    repo_token: badc29b931533dd8efb832ffff7bf8dbc31486290ae3b1c81d38fa677795ffaf
 
 # update composer dist
 before_install:
@@ -40,4 +41,4 @@ script:
 
 # report code coverage
 after_script:
-  - if [[ "hhvm" == "$TRAVIS_PHP_VERSION" ]]; then echo "Not hhvm" ; else CODECLIMATE_REPO_TOKEN=$CODECLIMATE_REPO_TOKEN ./vendor/bin/test-reporter ; fi
+  - if [[ "hhvm" == "$TRAVIS_PHP_VERSION" ]]; then echo "HHVM - skip coverage reporter" ; else ./vendor/bin/test-reporter ; fi
