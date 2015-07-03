@@ -69,6 +69,14 @@ abstract class AbstractContent implements Countable, ContentInterface
     }
 
     /**
+     * @return string
+     */
+    public function getEncoding()
+    {
+        return $this->encoding;
+    }
+
+    /**
      * @return int
      */
     public function count()

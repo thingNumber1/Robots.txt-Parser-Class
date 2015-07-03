@@ -122,7 +122,9 @@ class Parser {
         $cDirective = $this->state->getCurrentDirective();
         $this->state->setPreviousDirective($cDirective);
 
-        $newDirective = $this->content->getDirectiveFromCurrentWord();
+        $newDirective = $this->content
+            ->getHelper()
+            ->getDirectiveFromCurrentWord();
         $this->state->setCurrentDirective($newDirective);
 
         return $this;

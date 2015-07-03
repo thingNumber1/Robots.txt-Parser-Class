@@ -9,7 +9,7 @@ namespace t1gor\RobotsTxt\Content;
  * @codeCoverageIgnore
  * @package t1gor\RobotsTxt\Content
  */
-final class EmptyContent extends AbstractContent implements ContentInterface
+final class EmptyContent extends AbstractContent
 {
     /**
      * @param mixed $source

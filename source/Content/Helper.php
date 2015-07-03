@@ -19,8 +19,20 @@ class Helper implements HelperInterface
     protected $content = null;
 
     const CHAR_LINE_SEPARATOR = ':';
-    const CHAR_SPACE = '\s';
     const CHAR_SHARP = '#';
+
+    /**
+     * To avoid parsing class name - just use the map
+     * @var array
+     */
+    protected static $directiveClassMap = [
+        'allow' => 'Allow',
+        'disallow' =>'Disallow',
+        'host' => 'Host',
+        'sitemap' => 'Sitemap',
+        'crawl-delay' => 'CrawlDelay',
+        'user-agent' => 'UserAgent'
+    ];
 
     /**
      * @param ContentInterface $content
@@ -48,10 +60,11 @@ class Helper implements HelperInterface
     }
 
     /**
+     * @link http://php.net/manual/en/function.ctype-space.php
      * @return bool
      */
     public function isSpace() {
-        return ($this->content->getCurrentChar() === static::CHAR_SPACE);
+        return ctype_space($this->content->getCurrentChar());
     }
 
     /**
@@ -66,8 +79,10 @@ class Helper implements HelperInterface
      */
     public function getDirectiveFromCurrentWord()
     {
+        $nameSpace = '\t1gor\RobotsTxt\Directive\\';
         $dName = mb_strtolower(trim($this->content->getCurrentWord()));
-        return new $dName();
+        $className = $nameSpace.static::$directiveClassMap[ $dName ];
+        return new $className();
     }
 
     /**
