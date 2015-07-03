@@ -23,9 +23,16 @@ before_install:
 # install dependancies
 install:
   - composer update
-  - echo $TRAVIS_PHP_VERSION
+
+# prepare test data
+before_script:
   - sudo sh ./bin/prepare-for-test.sh
+
+# what are we doing as build?
+script:
+  - echo $TRAVIS_PHP_VERSION
+  - if [ "hhvm" == $TRAVIS_PHP_VERSION ]; then ./vendor/bin/phpunit --c ./test/phpunit-hhvm.xml else ./vendor/bin/phpunit fi
 
 # report code coverage
 after_script:
-  - CODECLIMATE_REPO_TOKEN=badc29b931533dd8efb832ffff7bf8dbc31486290ae3b1c81d38fa677795ffaf ./vendor/bin/test-reporter
+  - if [ "hhvm" != $TRAVIS_PHP_VERSION ]; then CODECLIMATE_REPO_TOKEN=badc29b931533dd8efb832ffff7bf8dbc31486290ae3b1c81d38fa677795ffaf ./vendor/bin/test-reporter fi
