@@ -5,6 +5,7 @@ sudo: true
 # target php versions
 # no php 5.3 as it is no longer maintained
 php:
+  - 7.0
   - 5.6
   - 5.5
   - 5.4
@@ -22,6 +23,7 @@ before_install:
 # install dependancies
 install:
   - composer update
+  - echo $TRAVIS_PHP_VERSION
   - sudo sh ./bin/prepare-for-test.sh
 
 # report code coverage
