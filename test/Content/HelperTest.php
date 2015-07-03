@@ -1,7 +1,7 @@
 <?php
 
 use \t1gor\RobotsTxt\Content\Helper;
-use \t1gor\RobotsTxt\Content\String;
+use \t1gor\RobotsTxt\Content\StringContent;
 
 /**
  * Class HelperTest
@@ -14,13 +14,13 @@ class HelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $sContent = new String('some string content');
+        $sContent = new StringContent('some string content');
         $this->assertAttributeInstanceOf(
             '\t1gor\RobotsTxt\Content\ContentInterface',
             'content', $sContent->getHelper()
         );
         $this->assertAttributeInstanceOf(
-            '\t1gor\RobotsTxt\Content\String',
+            '\t1gor\RobotsTxt\Content\StringContent',
             'content', $sContent->getHelper()
         );
     }
@@ -34,7 +34,7 @@ class HelperTest extends \PHPUnit_Framework_TestCase
     public function testIsNewLine($string, $result = false)
     {
         // prepare content
-        $sContent = new String($string);
+        $sContent = new StringContent($string);
         $sContent->read();
 
         // build helper
@@ -50,7 +50,7 @@ class HelperTest extends \PHPUnit_Framework_TestCase
     public function testIsLineSeparator($string, $result = false)
     {
         // prepare content
-        $sContent = new String($string);
+        $sContent = new StringContent($string);
         $sContent->read();
 
         // build helper
@@ -66,7 +66,7 @@ class HelperTest extends \PHPUnit_Framework_TestCase
     public function testIsSpace($string, $result = false)
     {
         // prepare content
-        $sContent = new String($string);
+        $sContent = new StringContent($string);
         $sContent->read();
 
         // build helper
@@ -82,7 +82,7 @@ class HelperTest extends \PHPUnit_Framework_TestCase
     public function testIsCharp($string, $result = false)
     {
         // prepare content
-        $sContent = new String($string);
+        $sContent = new StringContent($string);
         $sContent->read();
 
         // build helper
@@ -98,7 +98,7 @@ class HelperTest extends \PHPUnit_Framework_TestCase
     public function testGetDirectiveFromCurrentWord($word, $class)
     {
         // prepare content
-        $sContent = new String('');
+        $sContent = new StringContent('');
         $sContent->setWord($word)->read();
 
         $iterface = '\t1gor\RobotsTxt\Directive\DirectiveInterface';

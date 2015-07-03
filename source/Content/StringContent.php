@@ -9,7 +9,7 @@ namespace t1gor\RobotsTxt\Content;
  *
  * @package t1gor\RobotsTxt\Content
  */
-final class String extends AbstractContent implements ContentInterface
+final class StringContent extends AbstractContent
 {
     /**
      * @var string

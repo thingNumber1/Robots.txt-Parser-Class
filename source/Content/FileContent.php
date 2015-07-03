@@ -6,13 +6,13 @@ use \t1gor\RobotsTxt\Content\File\Exception\NotFound as FileNotFound;
 use \t1gor\RobotsTxt\Content\File\Exception\NotReadable as FileNotReadable;
 
 /**
- * Class ContentFile
+ * Class FileContent
  *
  * Read the content from the file on the server.
  *
  * @package t1gor\RobotsTxt\Content
  */
-final class File extends AbstractContent implements ContentInterface
+final class FileContent extends AbstractContent
 {
     /**
      * @var string
