@@ -41,4 +41,7 @@ script:
 
 # report code coverage
 after_script:
+  # show coverage in build logs
+  - if [[ "hhvm" == "$TRAVIS_PHP_VERSION" ]]; then echo "HHVM - skip coverage reporter" && exit 0 ; else php -f bin/CoverageChecker.php build/logs/clover.xml 5 ; fi
+  # send coverage to CodeClimate
   - if [[ "hhvm" == "$TRAVIS_PHP_VERSION" ]]; then echo "HHVM - skip coverage reporter" && exit 0 ; else ./vendor/bin/test-reporter ; fi
