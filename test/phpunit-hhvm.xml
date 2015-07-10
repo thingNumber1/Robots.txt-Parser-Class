@@ -6,7 +6,8 @@
          convertWarningsToExceptions="true"
          colors="true">
     <testsuites>
-        <testsuite name="">
+        <testsuite name="General">
+            <file>./ParserTest.php</file>
             <directory suffix="Test.php">./Content</directory>
         </testsuite>
     </testsuites>

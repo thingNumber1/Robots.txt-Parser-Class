@@ -86,8 +86,6 @@ abstract class AbstractContent implements Countable, ContentInterface
 
     /**
      * @return string
-     * @throws \LengthException
-     * @throws \OutOfRangeException
      */
     public function getCurrentChar() {
         return $this->char;

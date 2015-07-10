@@ -12,16 +12,11 @@ namespace t1gor\RobotsTxt\Content;
 final class StringContent extends AbstractContent
 {
     /**
-     * @var string
-     */
-    protected $string = '';
-
-    /**
      * @param string $source
      * @return mixed
      */
     public function __construct($source = '') {
-        $this->string = $source;
+        $this->content = $source;
     }
 
     /**
@@ -29,7 +24,6 @@ final class StringContent extends AbstractContent
      * @return $this
      */
     public function read() {
-        $this->content = $this->string;
         $this->contentLength = mb_strlen($this->content, $this->encoding);
         $this->increment();
         return $this;

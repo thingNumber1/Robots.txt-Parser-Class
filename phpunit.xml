@@ -16,6 +16,7 @@
     </filter>
 	<testsuites>
 		<testsuite name="General">
+            <file>./test/ParserTest.php</file>
 			<directory suffix="Test.php">./test/Content</directory>
 		</testsuite>
 	</testsuites>

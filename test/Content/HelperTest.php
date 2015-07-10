@@ -98,13 +98,67 @@ class HelperTest extends \PHPUnit_Framework_TestCase
     public function testGetDirectiveFromCurrentWord($word, $class)
     {
         // prepare content
-        $sContent = new StringContent('');
+        $sContent = new StringContent();
         $sContent->setWord($word)->read();
 
         $iterface = '\t1gor\RobotsTxt\Directive\DirectiveInterface';
         $directive = $sContent->getHelper()->getDirectiveFromCurrentWord();
         $this->assertInstanceOf($class, $directive);
         $this->assertInstanceOf($iterface, $directive);
+    }
+
+    /**
+     * @param string $word
+     * @dataProvider substructionWordsProvider
+     * @covers \t1gor\RobotsTxt\Content\Helper::removeLastCharFromCurrentWord
+     */
+    public function testRemoveLastCharFromCurrentWord($word)
+    {
+        $subWord = mb_substr($word, 0, -1);
+
+        // prepare content
+        $sContent = new StringContent();
+        $sContent
+            ->setWord($word)
+            ->read()
+            ->getHelper()
+            ->removeLastCharFromCurrentWord();
+
+        $this->assertEquals($subWord, $sContent->getCurrentWord());
+    }
+
+    /**
+     * @param string $word
+     * @dataProvider substructionWordsProvider
+     * @covers \t1gor\RobotsTxt\Content\Helper::setWordToLastChar
+     */
+    public function testSetWordToLastChar($word)
+    {
+        $lastChar = mb_substr($word, -1);
+
+        // prepare content
+        $sContent = new StringContent();
+        $sContent
+            ->setWord($word)
+            ->read()
+            ->getHelper()
+            ->setWordToLastChar();
+
+        $this->assertEquals($lastChar, $sContent->getCurrentWord());
+    }
+
+    /**
+     * Use different languages for mb_
+     * @return array
+     */
+    public function substructionWordsProvider()
+    {
+        return [
+            [ 'word' ],
+            [ 'слово' ],
+            [ 'Wort' ],
+            [ 'מילה' ],
+        ];
     }
 
     /**

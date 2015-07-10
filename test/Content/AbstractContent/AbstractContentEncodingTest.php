@@ -32,6 +32,24 @@ class AbstractContentEncodingTest extends \AbstractContentTest
     }
 
     /**
+     * @expectedException \t1gor\RobotsTxt\Content\Exception\InvalidEncoding
+     * @covers \t1gor\RobotsTxt\Content\AbstractContent::setEncoding
+     */
+    public function testSetEncodingInvalidException()
+    {
+        // remember
+        $previous = error_reporting();
+
+        // suppress errors
+        error_reporting(0);
+
+        $this->content->setEncoding('some-dummy-encoding');
+
+        // restore
+        error_reporting($previous);
+    }
+
+    /**
      * @covers \t1gor\RobotsTxt\Content\AbstractContent::setEncoding
      * @covers \t1gor\RobotsTxt\Content\AbstractContent::getEncoding
      */

@@ -13,7 +13,7 @@ abstract class AbstractState
     /**
      * @var string
      */
-    protected $name;
+    protected static $name;
 
     /**
      * @var DirectiveInterface
