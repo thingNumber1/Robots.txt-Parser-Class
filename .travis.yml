@@ -24,6 +24,7 @@ addons:
 
 # update composer dist
 before_install:
+  - find ./source -name \*.php -exec php -l "{}" \;
   - composer selfupdate
 
 # install dependancies
