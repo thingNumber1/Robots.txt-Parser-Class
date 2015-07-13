@@ -36,7 +36,6 @@ before_script:
 
 # what are we doing as build?
 script:
-  - echo $TRAVIS_PHP_VERSION
   - if [[ "hhvm" == "$TRAVIS_PHP_VERSION" ]]; then ./vendor/bin/phpunit -c ./test/phpunit-hhvm.xml ; else ./vendor/bin/phpunit ; fi
 
 # report code coverage
