@@ -18,8 +18,14 @@ interface ContentInterface
      * Set content encoding
      * @param string $encoding
      * @return $this
+     * @throws \t1gor\RobotsTxt\Content\Exception\InvalidEncoding
      */
     public function setEncoding($encoding);
+
+    /**
+     * @return string
+     */
+    public function getEncoding();
 
     /**
      * Should set internal content var and return an instance of self

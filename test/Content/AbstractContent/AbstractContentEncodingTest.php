@@ -9,6 +9,7 @@ use \t1gor\RobotsTxt\Content\EmptyContent;
 class AbstractContentEncodingTest extends \AbstractContentTest
 {
     /**
+     * @param string $encoding
      * @dataProvider correctEncodingProvider
      * @covers \t1gor\RobotsTxt\Content\AbstractContent::setEncoding
      * @covers \t1gor\RobotsTxt\Content\AbstractContent::getEncoding
@@ -74,7 +75,7 @@ class AbstractContentEncodingTest extends \AbstractContentTest
             ['8bit'],
             ['HZ'],
             ['HTML-ENTITIES'],
-            ['UTF-32'],
+            ['UTF-32']
         ];
     }
 }

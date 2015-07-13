@@ -10,19 +10,40 @@ use \t1gor\RobotsTxt\Content\EmptyContent;
 class ParserTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var \t1gor\RobotsTxt\Parser
+     */
+    protected $parser;
+
+    /**
+     * Create instance
+     */
+    public function setUp()
+    {
+        $this->parser = new Parser();
+    }
+
+    /**
+     * Clean-up
+     */
+    public function tearDown()
+    {
+        $this->parser = null;
+        unset($this->parser);
+    }
+
+    /**
      * @covers \t1gor\RobotsTxt\Parser::__construct
      */
     public function testConstruct()
     {
-        $parser = new Parser();
-        $this->assertInstanceOf('\t1gor\RobotsTxt\Parser', $parser);
+        $this->assertInstanceOf('\t1gor\RobotsTxt\Parser', $this->parser);
         $this->assertAttributeInstanceOf(
             '\t1gor\RobotsTxt\State\StateInterface',
-            'state', $parser
+            'state', $this->parser
         );
         $this->assertAttributeInstanceOf(
             '\t1gor\RobotsTxt\Rules\RuleSet',
-            'rules', $parser
+            'rules', $this->parser
         );
     }
 
@@ -32,12 +53,45 @@ class ParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetAndGetContent()
     {
-        $parser = new Parser();
-        $parser->setContent(new EmptyContent());
-
+        $this->parser->setContent(new EmptyContent());
         $cInterface = '\t1gor\RobotsTxt\Content\ContentInterface';
-        $this->assertAttributeInstanceOf($cInterface, 'content', $parser);
-        $this->assertInstanceOf($cInterface, $parser->getContent());
-        $this->assertInstanceOf($cInterface, $parser->getContent());
+        $this->assertAttributeInstanceOf($cInterface, 'content', $this->parser);
+        $this->assertInstanceOf($cInterface, $this->parser->getContent());
+    }
+
+    /**
+     * @param string $encoding
+     * @covers \t1gor\RobotsTxt\Parser::setContent
+     * @dataProvider validEncodingProvider
+     */
+    public function testSetContentWithEncoding($encoding)
+    {
+        $this->parser->setContent(new EmptyContent(), $encoding);
+        $this->assertEquals($encoding, $this->parser->getContent()->getEncoding());
+    }
+
+    /**
+     * @covers \t1gor\RobotsTxt\Parser::setContent
+     * @expectedException \t1gor\RobotsTxt\Content\Exception\InvalidEncoding
+     */
+    public function testSetContentWithInvalidEncoding()
+    {
+        $this->parser->setContent(new EmptyContent(), 'bfdanbdgandagnmda');
+    }
+
+    /**
+     * @return array
+     */
+    public function validEncodingProvider()
+    {
+        return [
+            ['UTF-8'],
+            ['ISO-8859-1'],
+            ['Windows-1251'],
+            ['8bit'],
+            ['HZ'],
+            ['HTML-ENTITIES'],
+            ['UTF-32']
+        ];
     }
 }

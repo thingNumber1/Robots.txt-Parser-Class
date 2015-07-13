@@ -129,7 +129,7 @@ abstract class AbstractContent implements Countable, ContentInterface
     }
 
     /**
-     * @return \t1gor\RobotsTxt\Content\Helper
+     * @return \t1gor\RobotsTxt\Content\HelperInterface
      */
     public function getHelper()
     {

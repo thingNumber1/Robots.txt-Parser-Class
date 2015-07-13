@@ -59,6 +59,7 @@ class Parser {
      * @param ContentInterface $content
      * [@param string $encoding]
      * @return $this
+     * @throws \t1gor\RobotsTxt\Content\Exception\InvalidEncoding
      */
     public function setContent(ContentInterface $content, $encoding = null)
     {
