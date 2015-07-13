@@ -98,9 +98,11 @@ class Parser {
     public function parse()
     {
         // while have content - go!
-        while ($this->content->getCharIndex() <= $this->content->length()) {
+        while ($this->content->getCharIndex() <= $this->content->count()) {
             $this->state->process($this);
         }
+
+        var_dump($this); die;
 
         /**
          * @todo rewrite this to new interface

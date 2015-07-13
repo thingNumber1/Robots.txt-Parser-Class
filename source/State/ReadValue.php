@@ -47,7 +47,7 @@ final class ReadValue extends AbstractState implements StateInterface
         $p->getCurrentDirective()->addRule($p);
 
         // clean-up
-        $p->getContent()->flushWord();
+        $p->getContent()->setWord('');
         $p->setState(new ZeroPoint());
 
         return $p;

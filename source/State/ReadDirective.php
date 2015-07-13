@@ -27,7 +27,7 @@ final class ReadDirective extends AbstractState implements StateInterface
         $content->increment();
 
         if ($content->isLineSeparator()) {
-            $content->flushWord();
+            $content->setWord('');
             $p->setState(new ReadValue());
         }
         else {

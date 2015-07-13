@@ -42,7 +42,7 @@ interface ContentInterface
      * Move cursor pointer
      * @return $this
      */
-    // protected function increment();
+    public function increment();
 
     /**
      * @return string

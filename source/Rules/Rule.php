@@ -11,6 +11,8 @@ use \ArrayObject;
  */
 class Rule
 {
+    const UA_DEFAULT = '*';
+
     /**
      * @var string
      */
@@ -27,11 +29,11 @@ class Rule
     protected $value;
 
     /**
-     * @param string $userAgent
+     * @param string $userAgent = '*' by default
      * @param string $key
      * @param mixed $value
      */
-    public function __construct($userAgent, $key, $value)
+    public function __construct($userAgent = self::UA_DEFAULT, $key, $value)
     {
         $this->userAgent = $userAgent;
         $this->key = $key;

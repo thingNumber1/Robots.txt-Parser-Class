@@ -71,15 +71,6 @@ class ParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \t1gor\RobotsTxt\Parser::setContent
-     * @expectedException \t1gor\RobotsTxt\Content\Exception\InvalidEncoding
-     */
-    public function testSetContentWithInvalidEncoding()
-    {
-        $this->parser->setContent(new EmptyContent(), 'bfdanbdgandagnmda');
-    }
-
-    /**
      * @return array
      */
     public function validEncodingProvider()

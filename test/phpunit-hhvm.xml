@@ -7,8 +7,8 @@
          colors="true">
     <testsuites>
         <testsuite name="General">
-            <file>./ParserTest.php</file>
             <directory suffix="Test.php">./Content</directory>
+            <directory suffix="Test.php">./Parser</directory>
         </testsuite>
     </testsuites>
 </phpunit>

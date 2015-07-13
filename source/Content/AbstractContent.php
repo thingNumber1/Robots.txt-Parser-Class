@@ -109,7 +109,7 @@ abstract class AbstractContent implements Countable, ContentInterface
      * Move cursor pointer
      * @return $this
      */
-    protected function increment()
+    public function increment()
     {
         $this->char = mb_strtolower(mb_substr($this->content, $this->charIndex, 1));
         $this->word .= $this->char;

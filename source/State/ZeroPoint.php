@@ -7,7 +7,7 @@ use \t1gor\RobotsTxt\Directive\Allow;
 use \t1gor\RobotsTxt\Directive\Disallow;
 use \t1gor\RobotsTxt\Directive\Host;
 use \t1gor\RobotsTxt\Directive\UserAgent;
-use \t1gor\RobotsTxt\Directive\SiteMap;
+use \t1gor\RobotsTxt\Directive\Sitemap;
 use \t1gor\RobotsTxt\Directive\CrawlDelay;
 use \t1gor\RobotsTxt\Directive\CleanParam;
 
@@ -34,7 +34,7 @@ final class ZeroPoint extends AbstractState implements StateInterface
             Disallow::getName(),
             Host::getName(),
             UserAgent::getName(),
-            SiteMap::getName(),
+            Sitemap::getName(),
             CrawlDelay::getName(),
             CleanParam::getName()
         ], true);
@@ -53,9 +53,9 @@ final class ZeroPoint extends AbstractState implements StateInterface
             $p->setState(new ZeroPoint());
         }
         // unknown directive - skip it
-        elseif ($content->isNewLine()) {
+        elseif ($content->getHelper()->isNewLine()) {
             $content
-                ->flushWord()
+                ->setWord('')
                 ->increment();
         }
         else {
