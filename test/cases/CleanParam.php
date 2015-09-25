@@ -1,49 +1,60 @@
 <?php
-	class CleanParamTest extends \PHPUnit_Framework_TestCase
+/**
+ * @group clean-param
+ */
+class CleanParamTest extends \PHPUnit_Framework_TestCase
+{
+	/**
+	 * @link https://help.yandex.ru/webmaster/controlling-robot/robots-txt.xml#clean-param
+	 *
+	 * @dataProvider generateDataForTest
+	 * @covers RobotsTxtParser::isDisallowed
+	 * @covers RobotsTxtParser::checkRule
+	 * @param string $content
+	 * @param string $urls
+	 */
+	public function testCleanParam($content, $urls)
 	{
-		/**
-		 * @link https://help.yandex.ru/webmaster/controlling-robot/robots-txt.xml#clean-param
-		 *
-		 * @dataProvider generateDataForTest
-		 * @covers RobotsTxtParser::isDisallowed
-		 * @covers RobotsTxtParser::checkRule
-		 * @param string $robotsTxtContent
-		 */
-		public function testCleanParam($robotsTxtContent, $message = NULL)
-		{
-			// init parser
-			$parser = new RobotsTxtParser($robotsTxtContent);
-			$rules = $parser->getRules();
-			$this->assertInstanceOf('RobotsTxtParser', $parser);
-			$this->assertObjectHasAttribute('rules', $parser);
-			$this->assertArrayHasKey('*', $rules);
-			$this->assertArrayHasKey('clean-param', $rules['*']);
-			$this->assertEquals(array('utm_source&utm_medium&utm.campaign'), $rules['*']['clean-param'], $message);
-		}
+		// init parser
+		$parser = new RobotsTxtParser($content);
+		$rules = $parser->getRules();
 
-		/**
-		 * Generate test case data
-		 * @return array
-		 */
-		public function generateDataForTest()
-		{
-			return array(
-				array(
-					"
+		$this->assertNotEmpty($rules);
+		$this->assertNotEmpty($rules['clean-param']);
+		$this->assertInternalType('array', $rules['clean-param']);
+	}
+
+	/**
+	 * Generate test case data
+	 * @return array
+	 */
+	public function generateDataForTest()
+	{
+		return array(
+			// single param
+			array(
+				"
 					User-Agent: *
-					#Clean-param: utm_source_commented&comment
-					Clean-param: utm_source&utm_medium&utm.campaign
-					",
-					'with comment'
-				),
+					Disallow:
+					Clean-param: s /forum/showthread.php
+				",
 				array(
-					"
-					User-Agent: *
-					Clean-param: utm_source&utm_medium&utm.campaign
-					Clean-param: utm_source&utm_medium&utm.campaign
-					",
-					'expected to remove repetitions of lines'
-				),
-			);
-		}
+					'/forum/showthread.php?s=681498b9648949605&t=8243',
+					'/forum/showthread.php?s=1e71c4427317a117a&t=8243'
+				)
+			),
+			// several params
+			array(
+				"
+					User-Agent: Yandex
+					Disallow:
+					Clean-param: s&ref /forum*/showthread.php
+				",
+				array(
+					'/forum_old/showthread.php?s=681498605&t=8243&ref=1311',
+					'/forum_new/showthread.php?s=1e71c417a&t=8243&ref=9896',
+				)
+			),
+		);
+	}
 	}
