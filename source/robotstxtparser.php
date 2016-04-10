@@ -836,11 +836,12 @@ class RobotsTxtParser
 	private function checkBasicRule($rule, $path)
 	{
 		$rule = $this->encode_url($rule);
-		$escaped = preg_quote($rule);
+		$rule = preg_quote($rule);
+		$path = preg_quote($path);
 		// match result
-		if (preg_match('@' . $escaped . '@', $path)) {
-			if (mb_stripos($escaped, '$') !== false) {
-				if (mb_strlen($escaped) - 1 == mb_strlen($path)) {
+		if (preg_match('@' . $rule . '@', $path)) {
+			if (mb_stripos($rule, '$') !== false) {
+				if (mb_strlen($rule) - 1 == mb_strlen($path)) {
 					return true;
 				}
 			} else {
