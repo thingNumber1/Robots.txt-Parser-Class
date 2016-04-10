@@ -838,7 +838,7 @@ class RobotsTxtParser
 		$rule = $this->encode_url($rule);
 		$escaped = preg_quote($rule);
 		// match result
-		if (preg_match('#' . $escaped . '#', $path)) {
+		if (preg_match('@' . $escaped . '@', $path)) {
 			if (mb_stripos($escaped, '$') !== false) {
 				if (mb_strlen($escaped) - 1 == mb_strlen($path)) {
 					return true;
