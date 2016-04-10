@@ -836,7 +836,7 @@ class RobotsTxtParser
 	private function checkBasicRule($rule, $path)
 	{
 		$rule = $this->encode_url($rule);
-		$escaped = preg_quote($rule, '#');
+		$escaped = preg_quote($rule);
 		// match result
 		if (preg_match('#' . $escaped . '#', $path)) {
 			if (mb_stripos($escaped, '$') !== false) {
