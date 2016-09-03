@@ -44,6 +44,9 @@ if ($parser->isAllowed('/')) {
 if ($parser->isDisallowed('/path/to/page.html')) {
 	// Crawl of /path/to/page.html is Disallowed
 }
+
+// also you can get the sitemap
+$sitemaps = $parser->getSitemaps();
 ?>
 ````
 Take a look at the [Wiki](https://github.com/t1gor/Robots.txt-Parser-Class/wiki/Features-and-usage-examples) for additional features and how to use them.
